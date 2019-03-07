@@ -1,0 +1,24 @@
+Eureka Server: 提供服务注册和发现
+1.添加依赖
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-eureka-server</artifactId>
+</dependency>
+2.开启服务注册
+在springboot工程的启动application类上加 @EnableEurekaServer
+3.添加配置
+server:
+  port: 8089
+eureka:
+  instance:
+    hostname: 127.0.0.1
+  client:
+    #防止将自己作为客户端尝试注册自己
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/cloud-eureka/
+4.访问： http://localhost:8089/
+
+Service Provider ：服务提供方
+将自身服务注册到 Eureka 注册中心，从而使服务消费方能够找到
