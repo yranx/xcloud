@@ -22,3 +22,21 @@ eureka:
 
 Service Provider ：服务提供方
 将自身服务注册到 Eureka 注册中心，从而使服务消费方能够找到
+1.添加依赖
+<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka-server</artifactId>
+		</dependency>
+2.开启服务注册
+在应用主类中通过加上 @EnableEurekaClient，但只有Eureka 可用，也可以使用@EnableDiscoveryClient
+3.添加配置
+server:
+  port: 8090
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8089/cloud-eureka/
+spring:
+  application:
+    name: eureka-provider

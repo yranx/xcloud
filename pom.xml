@@ -77,5 +77,6 @@
 
   <modules>
 	<module>cloud-eureka-service</module>
+    <module>cloud-eureka-provider</module>
   </modules>
 </project>
