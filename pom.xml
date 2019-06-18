@@ -83,5 +83,6 @@
     <module>cloud-eureka-provider3</module>
     <module>cloud-ribbon-consumer</module>
     <module>cloud-feign-consumer</module>
+    <module>cloud-ribbon-consumer-hystrix</module>
   </modules>
 </project>

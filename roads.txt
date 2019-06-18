@@ -43,6 +43,8 @@ spring:
 
 三：Ribbon ：提供客户端的软件负载均衡算法
 （通过RestTemplate + Ribbon去消费服务）
+
+cloud-ribbon-consumer
 1.在项目：spring-cloud-eureka-provider-1，spring-cloud-eureka-provider-2，spring-cloud-eureka-provider-3 的启动类，
 都加入 @Value("${server.port}")，修改home()方法， 来区分不同端口的Controller 响应；
 修改server: port:端口依次为8081,8082,8083
@@ -81,6 +83,8 @@ spring:
 四：Feign：是一个声明式的伪Http客户端，它使得写Http客户端变得更简单
 （通过Feign去消费服务）
 默认集成了Ribbon，并和Eureka结合，默认实现了负载均衡的效果
+
+cloud-feign-consumer
 1.添加依赖
 <dependency>
 	<groupId>org.springframework.cloud</groupId>
@@ -102,3 +106,25 @@ eureka:
 spring:
   application:
     name: feign-consumer
+4.报错： Field feignClient in com.ranx.FeignConsumerController required a bean of type 'com.ranx.IFeignClient' that could not be found
+这是因为未在启动类上加注解
+5.
+  查看服务是否都已注册成功：http://localhost:8089/
+  在命令窗口curl http://localhost:9000/hello，发现Ribbon已经实现负载均衡
+  或者浏览器get 请求http://localhost:9000/hello F5 刷新
+
+五：Hystrix Dashboard：断路器监控
+在Spring Cloud Hystrix中实现了线程隔离、断路器等一系列的服务保护功能。
+它也是基于Netflix的开源框架 Hystrix实现的，该框架目标在于通过控制那些访问远程系统、服务和第三方库的节点，从而对延迟和故障提供更强大的容错能力。
+Hystrix具备了服务降级、服务熔断、线程隔离、请求缓存、请求合并以及服务监控等强大功能。
+
+cloud-ribbon-consumer-hystrix
+1.在 Ribbon中使用断路器
+2.通过 @EnableHystrix 开启 Hystrix 断路器监控
+3.Controller 类，调用提供者的 hello 方法
+加上注解@HystrixCommand(fallbackMethod = "defaultStores") 该注解对该方法创建了熔断器的功能 ,并指定了defaultStores熔断方法
+4.依次启动项目：
+cloud-eureka-service、cloud-eureka-provider、cloud-eureka-provider-2、cloud-eureka-provider-3、
+cloud-ribbon-consumer-hystrix
+5.停止cloud-eureka-provider 提供者，端口为：8081服务
+再次访问命令窗口curl http://localhost:9000/hello
