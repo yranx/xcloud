@@ -1,4 +1,4 @@
-Eureka Server: 提供服务注册和发现
+一：Eureka Server: 提供服务注册和发现
 1.添加依赖
 <dependency>
 	<groupId>org.springframework.cloud</groupId>
@@ -20,7 +20,7 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/cloud-eureka/
 4.访问： http://localhost:8089/
 
-Service Provider ：服务提供方
+二： Service Provider ：服务提供方
 将自身服务注册到 Eureka 注册中心，从而使服务消费方能够找到
 1.添加依赖
 <dependency>
@@ -40,3 +40,65 @@ eureka:
 spring:
   application:
     name: eureka-provider
+
+三：Ribbon ：提供客户端的软件负载均衡算法
+（通过RestTemplate + Ribbon去消费服务）
+1.在项目：spring-cloud-eureka-provider-1，spring-cloud-eureka-provider-2，spring-cloud-eureka-provider-3 的启动类，
+都加入 @Value("${server.port}")，修改home()方法， 来区分不同端口的Controller 响应；
+修改server: port:端口依次为8081,8082,8083
+2.添加依赖
+<!-- 客户端负载均衡 -->
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-ribbon</artifactId>
+</dependency>
+
+<!-- eureka客户端 -->
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-eureka</artifactId>
+</dependency>
+
+3.开启服务负载均衡
+在工程的启动类中,通过@EnableDiscoveryClient向服务注册中心注册；
+向程序的ioc注入一个bean: restTemplate；
+并通过@LoadBalanced注解表明这个restRemplate开启负载均衡的功能。
+4.ConsumerController 类，调用提供者的 hello 方法
+5.配置 application.yml
+指定服务的注册中心地址，配置自己的服务端口，服务名称
+6.启动服务
+  依次启动项目：
+  spring-cloud-eureka-service
+  spring-cloud-eureka-provider
+  spring-cloud-eureka-provider-2
+  spring-cloud-eureka-provider-3
+  spring-cloud-ribbon-consumer
+7.
+查看服务是否都已注册成功：http://localhost:8089/
+在命令窗口curl http://localhost:9000/hello，发现Ribbon已经实现负载均衡
+或者浏览器get 请求http://localhost:9000/hello F5 刷新
+
+四：Feign：是一个声明式的伪Http客户端，它使得写Http客户端变得更简单
+（通过Feign去消费服务）
+默认集成了Ribbon，并和Eureka结合，默认实现了负载均衡的效果
+1.添加依赖
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-feign</artifactId>
+</dependency>
+2.开启Feign
+在工程的启动类中,通过
+@EnableFeignClients
+@EnableDiscoveryClient
+3.
+server:
+  port: 9000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8089/eureka/
+
+spring:
+  application:
+    name: feign-consumer

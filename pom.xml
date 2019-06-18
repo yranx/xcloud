@@ -11,6 +11,7 @@
   <name>xcloud</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
+  <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,5 +79,9 @@
   <modules>
 	<module>cloud-eureka-service</module>
     <module>cloud-eureka-provider</module>
+    <module>cloud-eureka-provider2</module>
+    <module>cloud-eureka-provider3</module>
+    <module>cloud-ribbon-consumer</module>
+    <module>cloud-feign-consumer</module>
   </modules>
 </project>
