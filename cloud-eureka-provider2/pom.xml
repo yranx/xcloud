@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.ranx</groupId>
-	<artifactId>cloud-eureka-provider</artifactId>
+	<artifactId>cloud-eureka-provider2</artifactId>
 	<version>1.0</version>
-	<name>cloud-eureka-provider</name>
+	<name>cloud-eureka-provider2</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -33,11 +33,11 @@
 		</dependency>
 
 		<!--Service Provider-->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-eureka</artifactId>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
 			<version>1.4.3.RELEASE</version>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
