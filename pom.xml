@@ -84,5 +84,7 @@
     <module>cloud-ribbon-consumer</module>
     <module>cloud-feign-consumer</module>
     <module>cloud-ribbon-consumer-hystrix</module>
+    <module>cloud-feign-consumer-hystrix</module>
+    <module>cloud-ribbon-consumer-hystrix-dashboard</module>
   </modules>
 </project>
