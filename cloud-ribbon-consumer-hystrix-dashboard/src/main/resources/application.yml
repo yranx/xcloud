@@ -1,0 +1,12 @@
+server:
+  port: 9000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8089/eureka/
+
+spring:
+  application:
+    name: rabbon-consumer-Hystrix-Dashboard
+

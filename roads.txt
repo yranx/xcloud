@@ -128,3 +128,21 @@ cloud-eureka-service、cloud-eureka-provider、cloud-eureka-provider-2、cloud-e
 cloud-ribbon-consumer-hystrix
 5.停止cloud-eureka-provider 提供者，端口为：8081服务
 再次访问命令窗口curl http://localhost:9000/hello
+
+cloud-feign-consumer-hystrix
+1.在 Feign中使用断路器
+Feign是   自带断路器  的，如果在Dalston版本的Spring Cloud中，它没有默认打开。
+需要需要在配置文件中配置打开它
+feign:
+  hystrix:
+    enabled: true
+2.@FeignClient 注解，加上fallbackFactory指定新建的HystrixClientFallbackFactory 工厂类
+程序的启动类通过 @EnableHystrix 开启 Hystrix
+
+Hystrix Dashboard
+作为断路器状态的一个组件，提供了数据监控和图形化界面。
+cloud-ribbon-consumer-hystrix-dashboard
+1.在程序启动类类，加上@EnableHystrix注解开启断路器，加上@EnableHystrixDashboard注解，开启HystrixDashboard。
+在程序中声明断路点@HystrixCommand；
+2.访问 http://127.0.0.1:9090/hystrix ,获取Hystrix Dashboard信息，默认最大打开5个终端获取监控信息，可以增加delay参数指定获取监控数据间隔时间
+ 在界面依次输入：http://127.0.0.1:9000/hystrix.stream 、2000 、hello 点确定。
