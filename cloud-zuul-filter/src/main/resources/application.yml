@@ -1,0 +1,18 @@
+spring:
+    application:
+      name: zuul-service-filter
+
+server:
+    port: 9000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8089/eureka/
+
+zuul:
+    routes:
+        api:
+            path: /**
+            serviceId: eureka-provider
+
