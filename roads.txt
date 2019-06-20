@@ -1,4 +1,4 @@
-一：Eureka Server: 提供服务注册和发现
+一：Eureka Server: 提供服务注册和发现 -- 服务注册中心
 1.添加依赖
 <dependency>
 	<groupId>org.springframework.cloud</groupId>
@@ -20,7 +20,7 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/cloud-eureka/
 4.访问： http://localhost:8089/
 
-二： Service Provider ：服务提供方
+二： Service Provider ：服务提供者
 将自身服务注册到 Eureka 注册中心，从而使服务消费方能够找到
 1.添加依赖
 <dependency>
@@ -146,3 +146,82 @@ cloud-ribbon-consumer-hystrix-dashboard
 在程序中声明断路点@HystrixCommand；
 2.访问 http://127.0.0.1:9090/hystrix ,获取Hystrix Dashboard信息，默认最大打开5个终端获取监控信息，可以增加delay参数指定获取监控数据间隔时间
  在界面依次输入：http://127.0.0.1:9000/hystrix.stream 、2000 、hello 点确定。
+
+六：服务网关 zuul
+通过服务网关统一向外系统提供REST API的过程中，Zuul为微服务架构提供了前门保护的作用，
+同时将权限控制这些较重的非业务逻辑内容迁移到服务路由层面，使得服务集群主体能够具备更高的可复用性和可测试性。
+Zuul是Netflix的基于JVM的路由器和服务器端负载均衡器
+cloud-zuul-service
+1.添加依赖
+  <dependency>
+  	<groupId>org.springframework.cloud</groupId>
+  	<artifactId>spring-cloud-starter-zuul</artifactId>
+  </dependency>
+2.在程序的启动类通过 @EnableZuulProxy 开启 Zuul 服务网关
+3.配置文件 application.yml
+spring:
+    application:
+      name: zuul-service
+server:
+    port: 9000
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+zuul:
+  routes:
+    api:
+        path: /**
+        serviceId: eureka-provider
+
+配置说明：
+浏览器访问:http://127.0.0.1:9000/ ,Zuul 会去 Eureka 服务注册中心，找到eureka-provider服务以均衡负载的方式访问
+4.访问:http://127.0.0.1:9000/ ,Zuul 会去 Eureka 服务注册中心，找到eureka-provider服务以均衡负载的方式访问
+在命令窗口curl http://localhost:9000/，发现一切正常
+
+cloud-zuul-filter
+1.TokenFilter、PasswordFilter
+  ZuulFilter 是Zuul中核心组件，通过继承该抽象类，覆写几个关键方法达到自定义调度请求的作用
+2.在程序的启动类 添加 Bean
+3.http://localhost:8089/
+http://127.0.0.1:9000/
+http://127.0.0.1:9000/?token=token-uuid
+http://127.0.0.1:9000/?token=token-uuid&password=123456
+
+七：高可用的分布式配置中心 Spring Cloud Config
+分布式配置中心组件spring cloud config，它支持配置服务放在配置服务的内存中（即本地），也支持放在远程Git仓库中。
+分两个角色，一是config server，二是config client。
+最大的优势是和Spring无缝集成，支持Spring里面Environment和PropertySource的接口，对于已有的Spring应用程序的迁移成本非常低
+
+SpringCloudConfig分服务端和客户端，服务端负责将git svn中存储的配置文件发布成REST接口，客户端可以从服务端REST接口获取配置。但客户端并不能主动感知到配置的变化，从而主动去获取新的配置，这需要每个客户端通过POST方法触发各自的/refresh。
+
+cloud-config-server
+1.添加依赖
+  <dependency>
+  	<groupId>org.springframework.cloud</groupId>
+  	<artifactId>spring-cloud-config-server</artifactId>
+  </dependency>
+2.在程序的启动类 通过 @EnableConfigServer 开启 SpringCloudConfig 服务端
+3.cloud-config 文件夹下有 application-dev.properties,application-sit.properties,application-uat.properties 三个文件，内容依次是：content=hello dev,content=hello sit,content=hello uat
+4.http://localhost:9888/xcloud-config-server/dev/master
+http://localhost:9888/master/application-dev.properties
+
+cloud-config-client
+1.添加依赖
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-config-client</artifactId>
+</dependency>
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+2.在程序的启动类通过 @Value 获取服务端的 content 值的内容
+3.这里的配置文件一定要注意！！
+s1:cloud-config-server端口配8888，在cloud-config-client会报端口占用错误！！
+后者有 Tomcat started on port(s): 8888 (http) with context path ''
+s2:cloud-config-client的配置需要注意：（如何配置！！）
+在bootstrap.yml中的内容是预先加载的内容，比application.properties和application.yml优先级还高。
+4.http://localhost:8888/
+（上面Tomcat启动的是8888端口）（为啥启动8888？？并没有配该端口！！）
