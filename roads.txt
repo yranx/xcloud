@@ -195,6 +195,7 @@ http://127.0.0.1:9000/?token=token-uuid&password=123456
 
 SpringCloudConfig分服务端和客户端，服务端负责将git svn中存储的配置文件发布成REST接口，客户端可以从服务端REST接口获取配置。但客户端并不能主动感知到配置的变化，从而主动去获取新的配置，这需要每个客户端通过POST方法触发各自的/refresh。
 
+SpringCloudConfig +git
 cloud-config-server
 1.添加依赖
   <dependency>
@@ -225,3 +226,19 @@ s2:cloud-config-client的配置需要注意：（如何配置！！）
 在bootstrap.yml中的内容是预先加载的内容，比application.properties和application.yml优先级还高。
 4.http://localhost:8888/
 （上面Tomcat启动的是8888端口）（为啥启动8888？？并没有配该端口！！）
+
+SpringCloudConfig  + Eureka
+cloud-config-server-eureka
+1.程序启动类
+@EnableConfigServer
+@EnableEurekaClient
+2.http://localhost:9888/xcloud-config-server/dev/master
+
+3.客户端配置
+cloud-eureka-service
+cloud-config-server-eureka
+cloud-eureka-provider-4
+cloud-eureka-provider-5
+cloud-feign-consumer
+4.http://localhost:8089/
+http://127.0.0.1:9000/hello

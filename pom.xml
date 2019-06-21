@@ -93,5 +93,8 @@
 
       <module>cloud-config-server</module>
       <module>cloud-config-client</module>
+      <module>cloud-config-server-eureka</module>
+      <module>cloud-eureka-provider4</module>
+      <module>cloud-eureka-provider5</module>
   </modules>
 </project>

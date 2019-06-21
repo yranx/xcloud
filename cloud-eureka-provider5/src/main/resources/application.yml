@@ -1,0 +1,17 @@
+# http://localhost:8089/
+server:
+  port: 8085
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8089/eureka/
+
+spring:
+  application:
+    name: eureka-provider5
+#    cloud:
+#      config:
+#        discovery:
+#          enable: true
+#          serviceId: cloud-config-server-eureka
