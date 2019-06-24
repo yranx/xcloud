@@ -233,7 +233,6 @@ cloud-config-server-eureka
 @EnableConfigServer
 @EnableEurekaClient
 2.http://localhost:9888/xcloud-config-server/dev/master
-
 3.客户端配置
 cloud-eureka-service
 cloud-config-server-eureka
@@ -242,3 +241,35 @@ cloud-eureka-provider-5
 cloud-feign-consumer
 4.http://localhost:8089/
 http://127.0.0.1:9000/hello
+5.端口问题
+config 这个端口问题很难受，TODO 回头看看又没有思路
+
+Spring Cloud Config + Refresh
+使用 Refresh 实现主动获取 Config Server 配置服务中心的最新配置
+（修改了Git仓库的配置后，不需要重启服务，就可以得到最新的配置）
+1.cloud-eureka-provider6
+(1)添加依赖
+<!-- actuator 监控 -->
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+(2)安全认证
+在 application.properties 添加以下配置.关闭安全认证
+#关闭刷新安全认证
+management.security.enabled=false
+值是false的话，除开health接口还依赖endpoints.health.sensitive的配置外，其他接口都不需要输入用户名和密码了
+(3)开启 refresh
+   在程序的启动类 EurekaProviderApplication 通过 @RefreshScope 开启 SpringCloudConfig 客户端的 refresh 刷新范围，来获取服务端的最新配置，@RefreshScope要加在声明@Controller声明的类上，否则refresh之后Conroller拿不到最新的值，会默认调用缓存
+2.cloud-eureka-service
+ cloud-config-server
+ cloud-eureka-provider6
+ cloud-feign-consumer
+3.通过 Postman 发送 POST请求到：http://localhost:8086/refresh，http://localhost:8083/refresh;
+curl http://127.0.0.1:9000/hello 访问服务，或者在浏览器访问http://127.0.0.1:9000/hello F5
+（Config Client 实现配置的实时更新，我们可以使用 /refresh 接口触发，如果所有客户端的配置的更改，都需要手动触发客户端 /refresh ）
+
+八：高可用的分布式配置中心 Spring Cloud Bus 消息总线集成（RabbitMQ）
+通过消息代理中间件RabbitMQ 加 Git的Webhooks來触发配置的更新
+
+cloud-config-server-amqp

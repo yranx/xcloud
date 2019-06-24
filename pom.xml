@@ -96,5 +96,9 @@
       <module>cloud-config-server-eureka</module>
       <module>cloud-eureka-provider4</module>
       <module>cloud-eureka-provider5</module>
+
+      <module>cloud-eureka-provider6</module>
+
+      <module>cloud-config-server-amqp</module>
   </modules>
 </project>
